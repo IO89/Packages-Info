@@ -1,0 +1,16 @@
+#Node modules
+/node_modules
+
+#Idea files
+/.idea
+
+.DS_Store
+
+**/package-lock.json
+
+npm-debug.log
+
+package-lock.json
+
+Package.iml
+Packages-Info.iml

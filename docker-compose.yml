@@ -1,0 +1,22 @@
+version: '3.2'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    volumes:
+      - .:/packages/backend
+
+  frontend:
+    build:
+      context: src/client
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    links:
+      - backend
+volumes:
+  backend:
+
