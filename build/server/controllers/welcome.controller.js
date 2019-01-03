@@ -5,7 +5,7 @@ var express_1 = require("express");
 // Assign router to the express.Router() instance
 var router = express_1.Router();
 // The / here corresponds to the route that the WelcomeController
-// is mounted on in the server.ts file.
+// is mounted on in the index.ts file.
 // In this case it's /welcome
 router.get('/', function (req, res) {
     // Reply with a hello world when no name param is provided
@@ -17,5 +17,5 @@ router.get('/:name', function (req, res) {
     // Greet the given name
     res.send("Hello, " + name);
 });
-// Export the express.Router() instance to be used by server.ts
+// Export the express.Router() instance to be used by index.ts
 exports.WelcomeController = router;
