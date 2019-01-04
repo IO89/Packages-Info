@@ -24,7 +24,7 @@ var findPackage = function (name) {
 // list packages by prop Package
 var listAllPackages = ramda_1.default.map(ramda_1.default.prop('Package'));
 //console.log('list packages',listAllPackages(file2));
-console.log('parsePackages', packagesList(file));
-//console.log('file1',file);
+//console.log('parsePackages', packagesList(file));
+console.log('file1', typeof file);
 //console.log('file2',file2);
-console.log('signle package', singePackage(file));
+//console.log('signle package',singePackage(file));

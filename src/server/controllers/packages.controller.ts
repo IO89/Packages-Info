@@ -2,12 +2,12 @@ import fs from 'fs';
 import R from 'ramda';
 
 // read file and encode to utf-8
-const file = fs.readFileSync('../../../data/status.real','utf-8');
+const file:string = fs.readFileSync('../../../data/status.real','utf-8');
 
 // Get rid of empty spaces and dots and space breaks
-const removeEmptyValue = R.reject(n => n== '');
-const removeSpaceDot = R.reject(n => n== ' .');
-const removeNewlineBreak = R.split('\n');
+const removeEmptyValue:void = R.reject(n => n== '');
+const removeSpaceDot:void = R.reject(n => n== ' .');
+const removeNewlineBreak:void = R.split('\n');
 //sort alphabetically
 const alphabeticalOrder = R.sortBy(R.compose(R.toLower, R.prop('name')));
 
@@ -40,7 +40,7 @@ const listAllPackages = R.map(R.prop('Package'));
 
 
 //console.log('list packages',listAllPackages(file2));
-console.log('parsePackages', packagesList(file));
-//console.log('file1',file);
+//console.log('parsePackages', packagesList(file));
+console.log('file1',typeof file);
 //console.log('file2',file2);
-console.log('signle package',singePackage(file));
+//console.log('signle package',singePackage(file));
