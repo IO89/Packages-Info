@@ -717,7 +717,7 @@ Description: FreeType 2 font engine, shared library files
  This package contains the files needed to run programs that use the
  FreeType 2 library.
  .
-  Home Page: http://www.freetype.org/
+  App Page: http://www.freetype.org/
   Authors: David Turner   <david.turner@freetype.org>
            Robert Wilhelm <robert.wilhelm@freetype.org>
            Werner Lemberg <werner.lemberg@freetype.org>
@@ -3896,7 +3896,7 @@ Description: The GNU bc arbitrary precision calculator language
  follows the POSIX 1003.2 draft standard, with several extensions including
  multi-character variable names, an `else' statement and full Boolean
  expressions.  GNU bc does not require the separate GNU dc program.
- Home page: http://directory.fsf.org/GNU/bc.html
+ App page: http://directory.fsf.org/GNU/bc.html
 Original-Maintainer: John G. Hasler <jhasler@debian.org>
 
 Package: libboost-iostreams1.46.1
