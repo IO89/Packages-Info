@@ -1,8 +1,9 @@
 import fs from 'fs';
 import R from 'ramda';
+import { statusReal } from '../../../data';
 
 // read file and encode to utf-8
-const file:string = fs.readFileSync('../../../data/status.real','utf-8');
+const file:string = fs.readFileSync(statusReal,'utf-8');
 
 // Get rid of empty spaces and dots and space breaks
 const removeEmptyValue:(file:string)=> string = R.reject(n => n== '');
@@ -36,7 +37,7 @@ const listAllPackages:(file:string)=> Array<string> = R.compose(
         R.split('\n'),
     );
 
-const listAllPackagesSorted:Array<string> = listAllPackages(file).sort();
+export const listAllPackagesSorted:Array<string> = listAllPackages(file).sort();
 
 const findPackage= R.find(
     R.propEq('Package','Name of package')(file)
