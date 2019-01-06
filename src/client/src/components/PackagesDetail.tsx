@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 
 export default class PackageDetails extends Component {
-    render(){
+   public render(){
         return(
             <div> PackageDetails</div>
         )
