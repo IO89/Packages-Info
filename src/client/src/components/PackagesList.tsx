@@ -2,18 +2,19 @@ import React,{Component} from 'react';
 import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
 
 interface PackagesListProps {
-    packages:[] | string[],
-    getPackagesList: string[],
     packagesData: AxiosPromise | AxiosResponse | AxiosError,
     element:string,
     index:number
 
 }
+interface PackagesListState {
+    packages:[] | string[]
+}
 
-export default class PackagesList extends Component <PackagesListProps| {}> {
+export default class PackagesList extends Component <PackagesListProps|{},PackagesListState> {
     state = { packages :[] };
 
-   async componentDidMount():Promise<void> {
+    async componentDidMount():Promise<void> {
         const packagesData = await axios.get('http://localhost:5000/packages');
         packagesData.data ? this.setState({packages:packagesData.data}):[];
     }
@@ -21,7 +22,7 @@ export default class PackagesList extends Component <PackagesListProps| {}> {
     render(){
         return(
             <div className="ui link list">
-                {this.state.packages.map((element, index) => <a className="item" key={index}>{element}</a>)}
+                {this.state.packages.map((element, index) => <a className="item" style={{textAlign:'center'}} key={index}>{element}</a>)}
             </div>
         )
     }

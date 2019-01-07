@@ -40,17 +40,22 @@ const listAllPackages:(file:string)=> Array<string> = R.compose(
 // sort alphabetically
 export const listAllPackagesSorted:Array<string> = listAllPackages(file).sort();
 
-/*
-const searchByName = R.compose(
-    R.find(R.propEq('Package', name)),
+const searchByName:(name:string) => Object = R.compose(
+    R.find(R.propEq('Package', 'makedev')),
     R.map(singlePackageObj),
     removeDotAndSpaceValue,
     removeEmptyValue,
     R.split('\n'),
 );
 
-export const findPackageName:(name:string) => Object = searchByName(file);
-*/
+const showDescriptionFiled:(file:string) => Array<string> = R.compose(
+    removeUndefinedValue,
+    R.pluck('Description'),
+    R.map(singlePackageObj),
+    removeEmptyValue,
+    R.split('\n'),
+);
+
 
 //console.log('list packages',listAllPackages(packageDetail(file)));
 //console.log('parsePackages', packagesList(file));
@@ -64,5 +69,8 @@ export const findPackageName:(name:string) => Object = searchByName(file);
 //console.log('listallPackages',listAllPackages(file));
 //console.log('list all sorted packages',listAllPackagesSorted);
 
-//console.log('findPackage makedev',findPackage);
+//console.log('findPackage makedev',searchByName(file));
 //console.log('search',search(file));
+//console.log('Description',showDescriptionFiled(file));
+//console.log('PackagesWithDescription',PackagesWithDescription(file));
+

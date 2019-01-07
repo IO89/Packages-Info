@@ -14,7 +14,6 @@ export class App extends React.Component<AppProps, {}>{
         return(
             <div>
                 <Header/>
-                App, {this.props.name}, you are {this.props.age}
                 <PackagesList />
             </div>
         );
