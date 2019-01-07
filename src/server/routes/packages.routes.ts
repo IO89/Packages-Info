@@ -7,11 +7,10 @@ router.get('/', (req: Request, res: Response) => {
     res.send(listAllPackagesSorted);
 });
 
-router.get('/:name', (req: Request, res: Response) => {
+/*router.get('/:name', (req: Request, res: Response) => {
     let { name } = req.params;
-
-    // Greet the given name
-    res.send(`Hello, ${name}`);
-});
+    const response = findPackageName(name);
+    res.send(response);
+});*/
 
 export const PackagesRoutes: Router = router;

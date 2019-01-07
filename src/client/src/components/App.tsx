@@ -10,12 +10,12 @@ interface AppProps {
 }
 
 export class App extends React.Component<AppProps, {}>{
-   public render(){
+    render(){
         return(
             <div>
                 <Header/>
                 App, {this.props.name}, you are {this.props.age}
-                <PackagesList/>
+                <PackagesList />
             </div>
         );
     }

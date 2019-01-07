@@ -1,16 +1,28 @@
 import React,{Component} from 'react';
-import axios from 'axios';
+import axios, {AxiosError, AxiosPromise, AxiosResponse} from 'axios';
 
-export default class PackagesList extends Component {
+interface PackagesListProps {
+    packages:[] | string[],
+    getPackagesList: string[],
+    packagesData: AxiosPromise | AxiosResponse | AxiosError,
+    element:string,
+    index:number
 
-    componentDidMount(): void {
-        const packagesData = axios.get('http://localhost:5000/packages');
-        console.log(packagesData);
+}
+
+export default class PackagesList extends Component <PackagesListProps| {}> {
+    state = { packages :[] };
+
+   async componentDidMount():Promise<void> {
+        const packagesData = await axios.get('http://localhost:5000/packages');
+        packagesData.data ? this.setState({packages:packagesData.data}):[];
     }
 
     render(){
         return(
-            <div>List of packages</div>
+            <div>
+                {this.state.packages.map((element, index) => <li className="item" key={index}>{element}</li>)}
+            </div>
         )
     }
 }
