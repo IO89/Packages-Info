@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import {Home} from './components/Home';
+import {App} from './components/App';
 
-ReactDOM.render(<Home name={"Just"} age={1}/>,document.getElementById("root"));
+ReactDOM.render(
+    <App age={1} name={'some'} />,
+    document.getElementById("root"));

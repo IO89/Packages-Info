@@ -10,7 +10,8 @@
     "client": "npm run start --prefix src/client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "tsc": "tsc",
-    "typescript-watch": "npm run tsc -- --watch"
+    "typescript-watch": "npm run tsc -- --watch",
+    "tslint": "tslint -c tslint.json 'src/server/*.ts' 'src/client/src/*.ts*'"
   },
   "author": "Ivan",
   "license": "ISC",
@@ -24,6 +25,7 @@
     "concurrently": "^4.1.0",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "ramda": "latest",
     "typescript": "^3.2.2"
   }
 }
