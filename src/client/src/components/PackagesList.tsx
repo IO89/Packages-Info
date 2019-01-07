@@ -20,8 +20,8 @@ export default class PackagesList extends Component <PackagesListProps| {}> {
 
     render(){
         return(
-            <div>
-                {this.state.packages.map((element, index) => <li className="item" key={index}>{element}</li>)}
+            <div className="ui link list">
+                {this.state.packages.map((element, index) => <a className="item" key={index}>{element}</a>)}
             </div>
         )
     }
