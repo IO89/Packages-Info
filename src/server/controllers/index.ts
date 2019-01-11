@@ -1,2 +1,2 @@
 /* app/controllers/index.ts */
-export * from './disabled.packages.controller';
+export * from './packages.controller';
