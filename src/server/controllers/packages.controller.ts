@@ -13,22 +13,23 @@ const moveOneIndexBack:(accumulator:Array<string>,element:string) => Array<strin
         : accumulator.push(element);
     return accumulator
 };
-/*const groupByPackages:(accumulator:Array<string>,element:string) => Array<string> = (accumulator, element) => {
-    element.match('Package')
-    ? accumulator[accumulator.length] += element
-        : accumulator.push(element);
-    return accumulator
-};*/
 
-// const fullPackage = R.reduce(groupByHomePage,{});
+const groupPackages:(accumulator:Array<string>,element:string) => Array<string> = (accumulator, element) => {
+    !element.match(/^Original-Maintainer.*/)
+        ? R.splitWhen(R.prop(accumulator[accumulator.length-1]))
+        : accumulator.push(element);
+   return accumulator
+};
+
 // Transform array to contain fields with full description
 const toFullArray:(file:string)=> Array<string> = R.compose(
     R.reject(n => n== ''),
-    R.reduce(moveOneIndexBack,[]),
-    //R.reduce(groupByPackages,[]),
+    R.reduce(groupPackages,[]),
+    //R.reduce(moveOneIndexBack,[]),
     R.split('\n'),
 );
 console.log('fullPackagesObj',toFullArray(file));
+
 const packageArray:Array<string> = toFullArray(file);
 
 // Separate elements by colon and create key value pairs
@@ -51,20 +52,22 @@ const toKeyValuePairs = packageArray.map((element,index)=>{
     return toObjects
 });
 //console.log('toKeyValuePairs',toKeyValuePairs);
-/*const check = R.groupBy(R.prop('Package'))(toKeyValuePairs);
-console.log(check);*/
+
+const separateByMaintainer = R.splitWhen(R.prop('Package'));
 
 
 
-const searchByName = (name) => R.find(R.propEq({'Package': name }));
 
-//console.log('searchByName',searchByName('libslf4j-java')(toKeyValuePairs));
+
+
 
 const showPackagesNames:(file:Object) => Array<string> = R.compose(
     R.reject(R.isNil),
     R.pluck('Package')
 );
 //console.log('showPackagesNames',showPackagesNames(toKeyValuePairs));
+
+const names = showPackagesNames(toKeyValuePairs);
 
 export const listAllPackagesSorted:Array<string> = showPackagesNames(toKeyValuePairs).sort();
 //console.log('listAllPackagesSorted',listAllPackagesSorted);
@@ -74,4 +77,20 @@ const showDescriptions:(file:Object) => Array<string> = R.compose(
     R.pluck('Description')
 );
 //console.log('showDescriptions',showDescriptions(toKeyValuePairs));
+const descriptions = showDescriptions(toKeyValuePairs);
 
+const showDependecies:(file:Object) => Array<string> = R.compose(
+  R.reject(R.isNil),
+  R.pluck('Depends')
+);
+//console.log('showDependecies',showDependecies(toKeyValuePairs));
+const dependecies = showDependecies(toKeyValuePairs);
+
+const result1 =  R.zipObj(names,descriptions,dependecies);
+//console.log('result',result1);
+
+const searchByName = (name) => R.find(R.propEq(name));
+//console.log(searchByName('libnfnetlink0')(result1));
+
+const result2 = R.zip(result1,dependecies);
+//console.log('result2',result2);
