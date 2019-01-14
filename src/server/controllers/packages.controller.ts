@@ -13,22 +13,21 @@ const moveOneIndexBack:(accumulator:Array<string>,element:string) => Array<strin
         : accumulator.push(element);
     return accumulator
 };
-
-const groupPackages:(accumulator:Array<string>,element:string) => Array<string> = (accumulator, element) => {
-    !element.match(/^Original-Maintainer.*/)
-        ? R.splitWhen(R.prop(accumulator[accumulator.length-1]))
-        : accumulator.push(element);
-   return accumulator
+const groupBy:(accumulator:Array<string>,element:string) => Array<string> = (accumulator, element) => {
+    !element.match(/^Package.*/)
+        ? accumulator.concat(element)
+        : accumulator[accumulator.length] =element;
+    return accumulator
 };
 
 // Transform array to contain fields with full description
 const toFullArray:(file:string)=> Array<string> = R.compose(
     R.reject(n => n== ''),
-    R.reduce(groupPackages,[]),
-    //R.reduce(moveOneIndexBack,[]),
+    R.reduce(groupBy,[]),
+    R.reduce(moveOneIndexBack,[]),
     R.split('\n'),
 );
-console.log('fullPackagesObj',toFullArray(file));
+ // console.log('fullPackagesObj',toFullArray(file));
 
 const packageArray:Array<string> = toFullArray(file);
 
@@ -39,7 +38,7 @@ const toKeyValuePairs = packageArray.map((element,index)=>{
     toObjects[split[0]]=split[1];
 
     //Create an array of unique depends and cleanup
-    if (toObjects['Depends']) {
+ /*   if (toObjects['Depends']) {
         const removeSpecialCharacters = R.replace(/(\(.*\))/, '');
         const toDependenciesArray = R.compose(
             R.uniq,
@@ -47,27 +46,19 @@ const toKeyValuePairs = packageArray.map((element,index)=>{
             R.split(',')
         );
         toObjects['Depends'] = toDependenciesArray(toObjects['Depends'])
-    }
+    }*/
+
     //console.log('packageArray',toObjects);
     return toObjects
 });
-//console.log('toKeyValuePairs',toKeyValuePairs);
-
-const separateByMaintainer = R.splitWhen(R.prop('Package'));
-
-
-
-
-
+console.log('toKeyValuePairs',toKeyValuePairs);
 
 
 const showPackagesNames:(file:Object) => Array<string> = R.compose(
     R.reject(R.isNil),
     R.pluck('Package')
 );
-//console.log('showPackagesNames',showPackagesNames(toKeyValuePairs));
-
-const names = showPackagesNames(toKeyValuePairs);
+// console.log('showPackagesNames',showPackagesNames(toKeyValuePairs));
 
 export const listAllPackagesSorted:Array<string> = showPackagesNames(toKeyValuePairs).sort();
 //console.log('listAllPackagesSorted',listAllPackagesSorted);
@@ -86,11 +77,11 @@ const showDependecies:(file:Object) => Array<string> = R.compose(
 //console.log('showDependecies',showDependecies(toKeyValuePairs));
 const dependecies = showDependecies(toKeyValuePairs);
 
-const result1 =  R.zipObj(names,descriptions,dependecies);
+//const result1 =  R.zipObj(names,descriptions,dependecies);
 //console.log('result',result1);
 
 const searchByName = (name) => R.find(R.propEq(name));
 //console.log(searchByName('libnfnetlink0')(result1));
 
-const result2 = R.zip(result1,dependecies);
+//const result2 = R.zip(result1,dependecies);
 //console.log('result2',result2);
