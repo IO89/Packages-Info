@@ -55,5 +55,5 @@ const packagesDescriptions:(packagesNames:Object,descriptions:Object)=>Object = 
 console.log('packagesDescriptions',packagesDescriptions);
 
 const searchByName:(name:string)=> Object = (name) => R.find(R.propEq(name));
-//console.log(searchByName('libnfnetlink0')(result1));
+//console.log(searchByName('name')(result1));
 
