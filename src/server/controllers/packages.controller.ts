@@ -16,13 +16,23 @@ const moveOneIndexBack:(accumulator:Array<string>,element:string) => Array<strin
 // Transform array to contain fields with full description
 const toFullArray:(file:string)=> Array<string> = R.compose(
     R.reject(n => n== ''),
-    //R.reduce(groupPackages,[]),
     R.reduce(moveOneIndexBack,[]),
     R.split('\n'),
 );
 //console.log('fullPackagesObj',toFullArray(file));
 
 const packageArray:Array<string> = toFullArray(file);
+
+const separateBy:(accumulator:Array<string>,element:string) => Array<string> = (accumulator, element) => {
+    let count = 0;
+    // @ts-ignore
+    const checkup = element.indexOf(/^Original-Maintainer.*/);
+    console.log('checkup',checkup);
+    accumulator[accumulator.length] = element
+    return accumulator.slice(0,checkup);
+};
+const toPackagesWhole = R.reduce(separateBy,[]);
+console.log(toPackagesWhole(packageArray));
 
 // Separate elements by colon and create key value pairs
 const toKeyValuePairs = packageArray.map((element,index)=>{
@@ -51,9 +61,11 @@ const showDescriptions:(file:Object) => Array<string> = R.compose(
 //console.log('showDescriptions',showDescriptions(toKeyValuePairs));
 const descriptions = showDescriptions(toKeyValuePairs);
 
-const packagesDescriptions:(packagesNames:Object,descriptions:Object)=>Object =  R.zipObj(packagesNames,descriptions);
-console.log('packagesDescriptions',packagesDescriptions);
+const packagesAndDescriptions:(packagesNames:Object,descriptions:Object)=>Object =  R.zipObj(packagesNames,descriptions);
+//console.log('packagesDescriptions',packagesAndDescriptions);
 
-const searchByName:(name:string)=> Object = (name) => R.find(R.propEq(name));
-//console.log(searchByName('name')(result1));
+const searchByName:(name:string)=> any = (name) => R.pluck(name);
+//console.log(searchByName('libkrb5-3')(packagesAndDescriptions));
+
+
 
