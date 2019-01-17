@@ -1,7 +1,9 @@
 import * as React from 'react';
 import {Header} from './Header';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
 import PackagesList from "./PackagesList";
+import PackagesDetail from "./PackagesDetail";
 
 
 interface AppProps {
@@ -13,8 +15,13 @@ export class App extends React.Component<AppProps, {}>{
     render(){
         return(
             <div>
-                <Header/>
-                <PackagesList />
+                <BrowserRouter>
+                    <div>
+                    <Header/>
+                    <Route exact path="/packages/:name" componet={PackagesDetail} />
+                    <Route path="/" component={PackagesList} />
+                    </div>
+                </BrowserRouter>
             </div>
         );
     }

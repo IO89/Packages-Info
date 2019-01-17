@@ -4,22 +4,23 @@ import { statusReal } from '../../../data';
 
 // read file and encode to utf-8
 const file:string = fs.readFileSync(statusReal,'utf-8');
-//console.log('file',file);
 
 // move element if it starts with space to one index back
 const moveOneIndexBack:(accumulator:Array<string>,element:string) => Array<string> = (accumulator, element) => {
     element.match(/^\s/)
         ? accumulator[accumulator.length-1] += element
         : accumulator.push(element);
-    return accumulator
+        return accumulator
 };
 
 // Create array separated by line breaks and move values to description
 const splitByKeyValuePairs:(file:string)=> Array<string> = R.compose(
     R.reject(n => n== ''),
+    //R.tap(console.log),
     R.reduce(moveOneIndexBack,[]),
     R.split('\n')
 );
+//console.log('splitByKeyValuePairs',splitByKeyValuePairs(file));
 
 // Extract key value pairs and convert to object
 const extractKeyPair:(file:string) => Object = R.compose(
@@ -36,19 +37,18 @@ const toSeparatePackage:(file:string)=> Array<Object> = R.compose(
     R.map(extractKeyPair),
     splitByKeyValuePairs
 );
-//console.log('toPackageTry',toPackageTry(file));
+//console.log('toSeparatePackage',toSeparatePackage(file));
 
 // Transform string to have separate packages by two line breaks
 const splitByPackages:(file:string)=> Array<string> = R.split('\n\n');
-//console.log('fullPackagesArray',toFullArray(file));
 
 // Iterate trough file and transform all packages
-const convertPackages:(file:string) => Array<Object> = R.compose(
+const convertAllPackages:(file:string) => Array<Object> = R.compose(
     R.map(toSeparatePackage),
     splitByPackages,
 );
 
-const Packages = convertPackages(file);
+const Packages = convertAllPackages(file);
 //console.log('Packages',Packages);
 
 const showPackagesNames:(file:Object) => Array<string> = R.compose(
@@ -57,7 +57,7 @@ const showPackagesNames:(file:Object) => Array<string> = R.compose(
 );
 //console.log('showPackagesNames',showPackagesNames(Packages));
 
-export const listAllPackagesSorted:Array<string> = showPackagesNames(convertPackages(file)).sort();
+export const listAllPackagesSorted:Array<string> = showPackagesNames(Packages.sort());
 //console.log('listAllPackagesSorted',listAllPackagesSorted);
 
 const showDescriptions:(file:Object) => Array<string> = R.compose(
