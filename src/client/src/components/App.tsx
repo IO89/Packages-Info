@@ -18,8 +18,8 @@ export class App extends React.Component<AppProps, {}>{
                 <BrowserRouter>
                     <div>
                     <Header/>
+                    <Route exact path="/" component={PackagesList} />
                     <Route exact path="/packages/:name" componet={PackagesDetail} />
-                    <Route path="/" component={PackagesList} />
                     </div>
                 </BrowserRouter>
             </div>
