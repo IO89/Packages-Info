@@ -1,12 +1,12 @@
-# Using node version 9 with alpine
-FROM node:9-alpine
+# Using node version 10 with alpine
+FROM node:10-alpine
 # Install tini
 RUN apk add --update tini
 # App  listens port 8080
 EXPOSE 8080
 WORKDIR /packages/frontend
 # Copy package.json
-COPY package.json package.json
+COPY package*.json ./
 # Copy everything from current dir to Packages dir
 COPY . .
 # npm install
