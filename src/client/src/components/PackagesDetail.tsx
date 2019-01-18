@@ -12,9 +12,9 @@ interface PackageDetailProps {
 }
 
 interface PackageDetailState {
-    packageName:string,
-    packageDescription:string,
-    dependencies: [] |string,
+    packageName: string,
+    packageDescription: string,
+    dependencies: [] | string,
     reverseDependencies: []| string
 }
 

@@ -1,11 +1,6 @@
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 
-interface Header {
-    className:string,
-    to:string
-}
-
 export const Header = () =>{
     return(
        <div className="header">
