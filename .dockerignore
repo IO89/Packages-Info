@@ -1,3 +1,7 @@
 .git
 node_modules
 .idea
+npm-debug.log
+Dockerfile*
+docker-compose*
+Readme.md

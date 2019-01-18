@@ -10,5 +10,5 @@ app.use(cors());
 app.use('/packages',PackagesRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Server is up ${PORT}`);
+    console.log(`Server is up on port ${PORT}`);
 });
