@@ -25,10 +25,8 @@ export default class PackagesList extends Component <PackagesListProps|{},Packag
    render(){
         return(
             <div className="ui link list">
-                {this.state.packages.map(
-                    (name, index) =>
-                        <Link
-                            to={`/packages/${name}`}
+                {this.state.packages.map((name, index) =>
+                        <Link to={`/packages/${name}`}
                             className="item"
                             style={{textAlign:'center'}}
                             key={index}>
