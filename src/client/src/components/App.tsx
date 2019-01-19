@@ -10,7 +10,7 @@ interface AppProps {
     path?: string;
 }
 
-export class App extends React.Component<AppProps, {}> {
+export default class App extends React.Component<AppProps, {}> {
     render() {
         return (
             <div>

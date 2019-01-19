@@ -16,7 +16,6 @@ const moveOneIndexBack: (accumulator: Array<string>, element: string) => Array<s
 // Create array separated by line breaks and move values to description
 const splitByKeyValuePairs: (file: string) => Array<string> = R.compose(
     R.reject(n => n == ''),
-    //R.tap(console.log),
     R.reduce(moveOneIndexBack, []),
     R.split('\n')
 );
@@ -31,7 +30,7 @@ const extractKeyPair: (file: string) => Object = R.compose(
 );
 //console.log('toKeyValuePairList',extractKeyPair(file));
 
-// Transform one package to Object with key value pairs
+// Transform one full package to an Object with key value pairs
 const toSeparatePackage: (file: string) => Array<Object> = R.compose(
     R.mergeAll,
     R.map(extractKeyPair),
@@ -39,14 +38,33 @@ const toSeparatePackage: (file: string) => Array<Object> = R.compose(
 );
 //console.log('toSeparatePackage',toSeparatePackage(file));
 
-// Transform string to have separate packages by two line breaks
-const splitByPackages: (file: string) => Array<string> = R.split('\n\n');
-
-// Iterate trough file and transform all packages
-const convertAllPackages: (file: string) => Array<Object> = R.compose(
-    R.map(toSeparatePackage),
-    splitByPackages,
+// Build dependencies into array and clean special characters in brackets
+const removeSpecialCharacters = R.compose(R.trim, R.replace(/(\(.*\))/, ''));
+const toDependenciesArray = R.compose(
+    R.map(removeSpecialCharacters),
+    R.split(','),
 );
+
+// Partial apply lens  where Depends field exists
+const dependsCheck = R.ifElse(
+    R.compose(R.isNil, R.path(['Depends'])),
+    R.identity,
+    R.over(R.lensPath(['Depends']), toDependenciesArray)
+);
+
+// Packages with depends as an array
+const withDependencies: (file: string) => Array<Object> = R.compose(
+    dependsCheck,
+    toSeparatePackage
+);
+//console.log('withDependenciesarray',withDependencies(file));
+
+// Separate by newline breaks and Iterate trough file and transform all packages
+const convertAllPackages: (file: string) => Array<Object> = R.compose(
+    R.map(withDependencies),
+    R.split('\n\n')
+);
+//console.log('convertAllPackages',convertAllPackages(file));
 
 const Packages = convertAllPackages(file);
 //console.log('Packages',Packages);
@@ -60,10 +78,6 @@ const showPackagesNames: (file: Object) => Array<string> = R.compose(
 export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
 //console.log('listAllPackagesSorted',listAllPackagesSorted);
 
-
 export const searchByName: (name: string) => Object = (name) => (
-    R.find(R.propEq('Package', name)))
-(Packages);
-//console.log(searchByName('augeas-lenses'));
-
-
+    R.find(R.propEq('Package', name)))(Packages);
+//console.log('searchByName', searchByName('python-pkg-resources'));
