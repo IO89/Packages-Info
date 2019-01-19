@@ -39,9 +39,10 @@ const toSeparatePackage: (file: string) => Array<Object> = R.compose(
 //console.log('toSeparatePackage',toSeparatePackage(file));
 
 // Build dependencies into array and clean special characters in brackets
-const removeSpecialCharacters = R.compose(R.trim, R.replace(/(\(.*\))/, ''));
+const removeSpecialCharacters = R.compose(R.trim, R.replace(/\(.*\)/, ''));
 const toDependenciesArray = R.compose(
     R.map(removeSpecialCharacters),
+    R.chain(R.split('|')),
     R.split(','),
 );
 
@@ -64,7 +65,7 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
     R.map(withDependencies),
     R.split('\n\n')
 );
-//console.log('convertAllPackages',convertAllPackages(file));
+console.log('convertAllPackages',convertAllPackages(file));
 
 const Packages = convertAllPackages(file);
 //console.log('Packages',Packages);
