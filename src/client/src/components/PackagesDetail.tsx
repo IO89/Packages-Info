@@ -32,7 +32,8 @@ export default class PackageDetail extends Component<PackageDetailProps & RouteC
         packageData.data.Package ? this.setState({packageName: packageData.data.Package}) : '';
         packageData.data.Description ? this.setState({packageDescription: packageData.data.Description}) : '';
         packageData.data.Depends ? this.setState({dependencies: packageData.data.Depends}) : [];
-
+        //packageData.data.Reverse-Dependencies ? this.setState({reverseDependencies:packageData.data.Reverse-Dependencies}) :[];
+        console.log(packageData.data);
     }
 
 
@@ -48,7 +49,7 @@ export default class PackageDetail extends Component<PackageDetailProps & RouteC
                     </div>
                 </div>
                 <div className="ui link list">
-                    <h4 style={{textAlign:'center'}} className="ui header">Dependencies</h4>
+                    <h4 style={{textAlign: 'center'}} className="ui header">Dependencies</h4>
                     {this.state.dependencies.map((name, index) =>
                         <Link to={`/packages/${name}`}
                               target="_self"
@@ -59,7 +60,7 @@ export default class PackageDetail extends Component<PackageDetailProps & RouteC
                         </Link>)}
                 </div>
                 <div className="ui link list">
-                    <h4 style={{textAlign:'center'}} className="ui header">Reverse Dependencies</h4>
+                    <h4 style={{textAlign: 'center'}} className="ui header">Reverse Dependencies</h4>
                     {this.state.dependencies.map((name, index) =>
                         <Link to={`/packages/${name}`}
                               target="_self"
