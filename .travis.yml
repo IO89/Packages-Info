@@ -1,0 +1,14 @@
+sudo: required
+services:
+  - docker
+
+script:
+  - docker build -t IO89/packages-client ./src/client
+  - docker build -t IO89/packages-nginx ./nginx
+  - docker build -t IO89/packages-server ./
+  # Log in to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push those images to DockerHub
+  - docker push IO89/packages-client
+  - docker push IO89/packages-nginx
+  - docker push IO89/packages-server

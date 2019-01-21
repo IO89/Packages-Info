@@ -1,14 +1,13 @@
 import express, {Request, Response} from "express";
 import cors from "cors";
 
-import { PackagesRoutes } from "./routes";
 import {listAllPackagesSorted, searchByName} from "./controllers";
 
 const app: express.Application = express();
 const PORT: number | string = process.env.PORT || 5000;
 
 app.use(cors());
-//app.use("/api/packages", PackagesRoutes);
+
 app.get("/api/packages", (req: Request, res: Response) => {
   res.send(listAllPackagesSorted);
 });
