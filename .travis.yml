@@ -15,11 +15,11 @@ script:
 
 deploy:
   provider: elasticbeanstalk
-  region: us-east-2
-  app: Packages-info
-  env: PackagesInfo-env
-  bucket_name: elasticbeanstalk-us-east-2-424179015669
-  bucket_path: packages-info
+  region: eu-west-1
+  app: packages
+  env: Packages-env
+  bucket_name: elasticbeanstalk-eu-west-1-424179015669
+  bucket_path: packages
   on:
     branch: master
   access_key_id: $AWS_ACCESS_KEY
