@@ -1,7 +1,5 @@
 # Using node version 10 with alpine
 FROM node:10-alpine as builder
-# Install tini
-RUN apk add --update tini
 WORKDIR /packages/frontend
 # Copy package.json
 COPY package*.json ./
@@ -9,8 +7,8 @@ COPY package*.json ./
 COPY . .
 # npm install
 RUN npm install && npm run tsc
-# Start container with command tini --npm start
-CMD ["tini","--","npm","run","build"]
+RUN npm run build
+
 
 FROM nginx
 EXPOSE 3000
