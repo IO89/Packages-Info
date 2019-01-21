@@ -1,0 +1,27 @@
+sudo: required
+services:
+  - docker
+
+script:
+  - docker build -t io89/packages-client ./src/client
+  - docker build -t io89/packages-nginx ./nginx
+  - docker build -t io89/packages-server ./
+  # Log in to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push those images to DockerHub
+  - docker push io89/packages-client
+  - docker push io89/packages-nginx
+  - docker push io89/packages-server
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: Packages-info
+  env: PackagesInfo-env
+  bucket_name: elasticbeanstalk-us-east-2-424179015669
+  bucket_path: packages-info
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY

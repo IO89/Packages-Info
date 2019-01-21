@@ -1,22 +1,25 @@
 version: '3.2'
 services:
-  backend:
+  ngnix:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '8080:80'
+  api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - '5000:5000'
     volumes:
-      - .:/packages/backend
-
-  frontend:
+      - /packages/backend/node_modules
+      - ./:/packages/backend
+  client:
     build:
       context: src/client
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
-      - '8080:8080'
-    links:
-      - backend
-volumes:
-  backend:
+      - '3000:3000'
 
