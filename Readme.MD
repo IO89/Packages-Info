@@ -1,6 +1,9 @@
 # Package Info App
-    Displays name of packages from status.real file.(work in progress)
-    List all the packages and able to navigate trough dependecnies and reverse dependencies(work in progress)
+    Displays names and descriptions of packages from status.real file.
+    List all the packages and navigate trough dependecnies and reverse dependencies(work in progress)
+## Demo
+    url
+
 ## How to install
     From root folder
     Backend: npm install
