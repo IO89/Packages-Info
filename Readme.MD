@@ -2,7 +2,7 @@
     Displays names and descriptions of packages from status.real file.
     List all the packages and navigate trough dependecnies and reverse dependencies(work in progress)
 ## Demo
-    url
+    http://packages-env.esn7dakke4.eu-west-1.elasticbeanstalk.com/
 
 ## How to install
     From root folder
