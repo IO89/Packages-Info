@@ -21,16 +21,14 @@ const splitByKeyValuePairs: (file: string) => Array<string> = R.compose(
   R.reduce(moveOneIndexBack, []),
   R.split("\n")
 );
-//console.log('splitByKeyValuePairs',splitByKeyValuePairs(file));
 
 // Extract key value pairs and convert to object
 const extractKeyPair: (file: string) => Object = R.compose(
   R.fromPairs(),
   R.of(),
   R.slice(1, 3),
-  R.split(/(.*):\s(.*)/)
+  R.split(/(.+?):\s(.*)/)
 );
-//console.log('toKeyValuePairList',extractKeyPair(file));
 
 // Transform one full package to an Object with key value pairs
 const toSeparatePackage: (file: string) => Array<Object> = R.compose(
@@ -89,9 +87,6 @@ const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.pluck("Package")
 );
 
-//console.log('showPackagesNames',showPackagesNames(Packages));
-
-
 // --------- find reverse dependencies and merge them to packages --------------
 //
 const extractName = R.prop('Package')(withDependencies(file));
@@ -107,28 +102,14 @@ const searchNameDepends = R.compose(
 );
 //console.log('searchNameDepends',searchNameDepends(file));
 
-// Check if Depends exist and find rev dependencies
-/*const searchReverseDependencies = R.compose(
-    searchNameDepends,
-    //R.tap(console.log),
-    //R.reject(emptyDepends)
-);*/
-//console.log('searchReverseDependencies',searchReverseDependencies(file));
-
-// build reverse dependencies array
+// build an array of reverse dependencies
 const reverseDependenciesArray = R.compose(
     R.map(R.prop("Package")),
     searchNameDepends
 );
 //console.log('reverseDependenciesArray',reverseDependenciesArray(file));
 
-// Merge reverse dependencies into object with depends
-const mergedDependencies = R.mergeLeft(withDependencies(file),{'Reverse': reverseDependenciesArray(file)});
-//console.log('mergedDependencies',mergedDependencies);
-
-export const listAllPackagesSorted: Array<string> = showPackagesNames(
-  Packages
-).sort();
+export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
 //console.log('listAllPackagesSorted',listAllPackagesSorted);
 
 export const searchByName: (name: string) => Object = name =>
