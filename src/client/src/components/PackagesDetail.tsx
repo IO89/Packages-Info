@@ -31,9 +31,7 @@ export default class PackageDetail extends Component<
 
   async componentDidMount() {
     const { name } = this.props.match.params;
-    const packageData = await axios.get(
-      `http://localhost:5000/packages/${name}`
-    );
+    const packageData = await axios.get(`/api/packages/${name}`);
     packageData.data.Package
       ? this.setState({ packageName: packageData.data.Package })
       : "";

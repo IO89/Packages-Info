@@ -21,7 +21,7 @@ export default class PackagesList extends Component<
   state = { packages: [] };
 
   async componentDidMount() {
-    const packagesData = await axios.get("http://localhost:5000/packages");
+    const packagesData = await axios.get("/api/packages");
     packagesData.data ? this.setState({ packages: packagesData.data }) : [];
   }
 
