@@ -12,3 +12,16 @@ script:
   - docker push io89/packages-client
   - docker push io89/packages-nginx
   - docker push io89/packages-server
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: Packages-info
+  env: PackagesInfo-env
+  bucket_name: elasticbeanstalk-us-east-2-424179015669
+  bucket_path: packages-info
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
