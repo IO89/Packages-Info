@@ -4,6 +4,7 @@ import { statusReal } from "../../../data";
 
 // read file and encode to utf-8
 const file: string = fs.readFileSync(statusReal, "utf-8");
+console.log(file)
 
 // ------------------ Create an array of packages objects -------------------------
 //
@@ -89,14 +90,14 @@ const showPackagesNames: (file: Object) => Array<string> = R.compose(
 
 // --------- find reverse dependencies and merge them to packages --------------
 //
-const extractName = R.prop('Package')(withDependencies(file));
-//console.log("extractName", extractName);
+const extractName = R.compose(R.prop('Package'),withDependencies);
+//console.log("extractName", extractName(file));
 
 // Find where packages where Package name is in Depends field
 const searchNameDepends = R.compose(
     R.filter(
         R.where({
-            Depends: R.includes(extractName)
+            Depends: R.includes(extractName(file))
         })),
     convertAllPackages
 );

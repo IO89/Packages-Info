@@ -9,5 +9,5 @@ COPY package*.json ./
 COPY . .
 #Npm install and typescript compiler
 RUN npm i && npm run tsc
-#Launch server in wathc mode
+#Launch server in watch mode
 CMD ["tini","--","npm","run","server"]

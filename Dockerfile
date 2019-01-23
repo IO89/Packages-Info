@@ -7,5 +7,4 @@ COPY package*.json ./
 COPY . .
 #Npm install and typescript compiler
 RUN npm i && npm run tsc
-#Launch server in wathc mode
 CMD ["npm","run","start"]
