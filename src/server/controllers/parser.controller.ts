@@ -4,7 +4,7 @@ import {statusReal} from "../../../data";
 // read file and encode to utf-8
 const file: string = fs.readFileSync(statusReal, "utf-8");
 
-const tokenizeCharacter = (type: string, value: string, input: string, current: number) =>
+const tokenizeCharacter = (type: string, value: string, input: string, current) =>
     (value === input[current] ? [1, {type, value}] : [0, null]);
 
 const tokenizeParenOpen = (input, current) => tokenizeCharacter('paren', '(', input, current);
@@ -25,7 +25,7 @@ const tokenizeLessthan = (input, current) => tokenizeCharacter('lessthan', '<', 
 
 const tokenizeDot = (input, current) => tokenizeCharacter('dot', '.', input, current);
 
-const tokenzieComma = (input, current) => tokenizeCharacter('comma', ',', input, current);
+const tokenizeComma = (input, current) => tokenizeCharacter('comma', ',', input, current);
 
 const tokenizePattern = (type: string, pattern, input, current) => {
     let char = input[current];
@@ -48,8 +48,9 @@ const tokenizeTwoNewlines = (input, current) => tokenizePattern('two-newlines', 
 
 const tokenizeName = (input, current) => tokenizePattern("name", /[a-z]/i, input, current);
 
+const tokenizeSpecialChars = (input,current) => tokenizePattern('special-chars',/\(.*\)/,input,current);
 
-const tokenizeString = (input: string, current: number) => {
+const tokenizeString = (input: string, current) => {
     if (input[current] === ' ') {
         let value = '';
         let consumedChars = 0;
@@ -68,10 +69,12 @@ const tokenizeString = (input: string, current: number) => {
     return [0, null]
 };
 
-/*
-const tokenizers = [skipWhiteSpace, tokenizeParenOpen, tokenizeParenClose, tokenizeString, tokenizeNumber, tokenizeName];
+const skipWhiteSpace = (input, current) =>   (/\s/.test(input[current])) ? [1, null] : [0, null];
 
-const tokenizer = (input) => {
+const tokenizers = [tokenizeName, tokenizeColon,tokenizeString, tokenizeTwoNewlines,tokenizeDash];
+
+
+const tokenizer = (input:string) => {
     let current = 0;
     let tokens = [];
     while (current < input.length) {
@@ -81,16 +84,30 @@ const tokenizer = (input) => {
             let [consumedChars, token] = tokenizer_fn(input, current);
             if(consumedChars !== 0) {
                 tokenized = true;
+                // @ts-ignore
                 current += consumedChars;
             }
             if(token) {
+                // @ts-ignore
                 tokens.push(token);
             }
         });
         if (!tokenized) {
-            throw new TypeError('I dont know what this character is: ' + char);
+            throw new TypeError('Unknown character');
         }
     }
     return tokens;
 };
-*/
+
+const res = tokenizer(file);
+console.log('res',res);
+
+const parseNumber = (tokens, current) => [current + 1,
+    {type: 'NumberLiteral',
+        value: tokens[current].value,
+    }];
+
+const parseString = (tokens, current) => [current + 1,
+    {type: 'StringLiteral',
+        value: tokens[current].value,
+    }];
