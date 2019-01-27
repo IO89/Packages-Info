@@ -1,33 +1,15 @@
 import fs from "fs";
 import {statusReal} from "../../../data";
 
-// read file and encode to utf-8
 const file: string = fs.readFileSync(statusReal, "utf-8");
 
-const tokenizeCharacter = (type: string, value: string, input: string, current) =>
+const tokenizeCharacter = (type: string, value: string, input: string, current: number) =>
     (value === input[current] ? [1, {type, value}] : [0, null]);
-
-const tokenizeParenOpen = (input, current) => tokenizeCharacter('paren', '(', input, current);
-
-const tokenizeParenClose = (input, current) => tokenizeCharacter('paren', ')', input, current);
 
 const tokenizeColon = (input, current) => tokenizeCharacter('colon', ':', input, current);
 
-const tokenizeNewline = (input, current) => tokenizeCharacter('newLine', '\n', input, current);
 
-const tokenizePipe = (input, current) => tokenizeCharacter('pipe', '|', input, current);
-
-const tokenizeDash = (input, current) => tokenizeCharacter('dash', '-', input, current);
-
-const tokenizeGreaterthan = (input, current) => tokenizeCharacter('greaterthan', '>', input, current);
-
-const tokenizeLessthan = (input, current) => tokenizeCharacter('lessthan', '<', input, current);
-
-const tokenizeDot = (input, current) => tokenizeCharacter('dot', '.', input, current);
-
-const tokenizeComma = (input, current) => tokenizeCharacter('comma', ',', input, current);
-
-const tokenizePattern = (type: string, pattern, input, current) => {
+const tokenizePattern = (type: string, pattern: RegExp, input: string, current: number) => {
     let char = input[current];
     let consumedChars = 0;
     if (pattern.test(char)) {
@@ -42,13 +24,12 @@ const tokenizePattern = (type: string, pattern, input, current) => {
     return [0, null]
 };
 
-const tokenizeNumber = (input, current) => tokenizePattern("number", /[0-9]/, input, current);
-
 const tokenizeTwoNewlines = (input, current) => tokenizePattern('two-newlines', /[\n\n]/, input, current);
 
-const tokenizeName = (input, current) => tokenizePattern("name", /[a-z]/i, input, current);
+const tokenizeName = (input, current) => tokenizePattern("name", /[a-zA-Z\-]/, input, current);
 
-const tokenizeSpecialChars = (input,current) => tokenizePattern('special-chars',/\(.*\)/,input,current);
+/*const test = tokenizeName('some-text:',0);
+console.log('test',test);*/
 
 const tokenizeString = (input: string, current) => {
     if (input[current] === ' ') {
@@ -69,26 +50,25 @@ const tokenizeString = (input: string, current) => {
     return [0, null]
 };
 
-const skipWhiteSpace = (input, current) =>   (/\s/.test(input[current])) ? [1, null] : [0, null];
-
-const tokenizers = [tokenizeName, tokenizeColon,tokenizeString, tokenizeTwoNewlines,tokenizeDash];
+const tokenizers = [tokenizeName, tokenizeColon, tokenizeString, tokenizeTwoNewlines];
 
 
-const tokenizer = (input:string) => {
-    let current = 0;
+const tokenizer = (input: string) => {
+    let current: any = 0;
     let tokens = [];
+
     while (current < input.length) {
         let tokenized = false;
         tokenizers.forEach(tokenizer_fn => {
-            if (tokenized) {return;}
+            if (tokenized) {
+                return;
+            }
             let [consumedChars, token] = tokenizer_fn(input, current);
-            if(consumedChars !== 0) {
+            if (consumedChars !== 0) {
                 tokenized = true;
-                // @ts-ignore
                 current += consumedChars;
             }
-            if(token) {
-                // @ts-ignore
+            if (token) {
                 tokens.push(token);
             }
         });
@@ -99,15 +79,73 @@ const tokenizer = (input:string) => {
     return tokens;
 };
 
-const res = tokenizer(file);
-console.log('res',res);
+const result1 = tokenizer(file);
+console.log('result1',result1);
 
-const parseNumber = (tokens, current) => [current + 1,
-    {type: 'NumberLiteral',
-        value: tokens[current].value,
-    }];
+/*
 
-const parseString = (tokens, current) => [current + 1,
-    {type: 'StringLiteral',
-        value: tokens[current].value,
-    }];
+const parseName = (tokens, current) => [current + 1, {
+    type: 'NameLiteral',
+    value: tokens[current].value,
+}];
+
+const parseColon = (tokens, current) => [current + 1, {
+    type: 'ColonLiteral',
+    value: tokens[current].value,
+}];
+
+const parseString = (tokens, current) => [current + 1, {
+    type: 'StringLiteral',
+    value: tokens[current].value,
+}];
+
+const parseNewline = (tokens, current) => [current + 1, {
+    type: 'NewlineLiteral',
+    value: tokens[current].value,
+}];
+*/
+
+
+/*
+const parsePackage = (tokens, current) => {
+    let token = tokens[++current];
+    let node = {
+        type: 'Package',
+        name: token.value,
+        params: [],
+    };
+    token = tokens[++current];
+    while (!(token.type === 'two-newlines' && token.value === '\n')) {
+        let param;
+        [current, param] = parseToken(tokens, current);
+        node.params.push(param);
+        token = tokens[current];
+    }
+    current++;
+    return [current, node];
+};
+*/
+
+
+/*
+const parseToken = (tokens, current) => {
+    let token = tokens[current];
+    switch (token.type) {
+        case:name
+    }
+    if (token.type === 'name') {
+        return parseName(tokens, current);
+    }
+    if (token.type === 'string') {
+        return parseString(tokens, current);
+    }
+    if (token.type === 'colon') {
+        return parseColon(tokens, current);
+    }
+    if (token.type === 'two-newlines' && token.value === '\n') {
+        return parsePackage(tokens, current);
+    }
+
+    throw new TypeError(token.type);
+};
+*/
