@@ -4,7 +4,7 @@ import { statusReal } from "../../../data";
 
 // read file and encode to utf-8
 const file: string = fs.readFileSync(statusReal, "utf-8");
-console.log(file)
+
 
 // ------------------ Create an array of packages objects -------------------------
 //
@@ -37,7 +37,6 @@ const toSeparatePackage: (file: string) => Array<Object> = R.compose(
   R.map(extractKeyPair),
   splitByKeyValuePairs
 );
-//console.log('toSeparatePackage',toSeparatePackage(file));
 
 // ------------------- Build dependencies into array and remove special characters in brackets ---------------
 //
@@ -71,17 +70,14 @@ const withDependencies: (file: string) => Array<Object> = R.compose(
   dependsCheck,
   toSeparatePackage
 );
-//console.log('withDependenciesArray',withDependencies(file));
 
 // -------------- Separate by newline breaks and Iterate trough file and transform all packages ---------------
 const convertAllPackages: (file: string) => Array<Object> = R.compose(
     R.map(withDependencies),
     R.split("\n\n")
 );
-//console.log('convertAllPackages',convertAllPackages(file));
 
 const Packages = convertAllPackages(file);
-//console.log('Packages',Packages);
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
@@ -91,7 +87,6 @@ const showPackagesNames: (file: Object) => Array<string> = R.compose(
 // --------- find reverse dependencies and merge them to packages --------------
 //
 const extractName = R.compose(R.prop('Package'),withDependencies);
-//console.log("extractName", extractName(file));
 
 // Find where packages where Package name is in Depends field
 const searchNameDepends = R.compose(
@@ -101,7 +96,6 @@ const searchNameDepends = R.compose(
         })),
     convertAllPackages
 );
-//console.log('searchNameDepends',searchNameDepends(file));
 
 // build an array of reverse dependencies
 const reverseDependenciesArray = R.compose(
