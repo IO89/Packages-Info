@@ -1,13 +1,14 @@
 import fs from "fs";
 import {statusReal} from "../../../data";
-import * as util from "util";
+import R from "ramda";
+import {element} from "prop-types";
 
 const file: string = fs.readFileSync(statusReal, "utf-8");
 
 const tokenizeCharacter = (type: string, value: string, input: string, current: number) =>
     (value === input[current] ? [1, {type, value}] : [0, null]);
 
-const tokenizeColon = (input: string, current: number) => tokenizeCharacter('colon', ':', input, current);
+const tokenizeColon = (input, current) => tokenizeCharacter('colon', ':', input, current);
 
 const tokenizePattern = (type: string, pattern: RegExp, input: string, current: number) => {
     let char = input[current];
@@ -24,12 +25,9 @@ const tokenizePattern = (type: string, pattern: RegExp, input: string, current: 
     return [0, null]
 };
 
-const tokenizeTwoNewlines = (input: string, current: number) => tokenizePattern('two-newlines', /[\n\n]/, input, current);
+const tokenizeTwoNewlines = (input, current) => tokenizePattern('two-newlines', /[\n\n]/, input, current);
 
-const tokenizeName = (input: string, current: number) => tokenizePattern("name", /[a-zA-Z\-]/, input, current);
-
-const test = tokenizeTwoNewlines('\n\n', 0);
-// console.log('tokenizeTwoNewlines',test);
+const tokenizeName = (input, current) => tokenizePattern("name", /[a-zA-Z\-]/, input, current);
 
 const tokenizeString = (input: string, current: number) => {
     if (input[current] === ' ') {
@@ -40,7 +38,7 @@ const tokenizeString = (input: string, current: number) => {
         let char = input[current + consumedChars];
         while (char !== "\n") {
             if (char === undefined) {
-                throw new TypeError("unterminated string ");
+                throw new TypeError("Unterminated string ");
             }
             value += char;
             consumedChars++;
@@ -58,16 +56,9 @@ interface Token {
     value: string,
 }
 
-interface Tokens {
-    current: number | string,
-    input: string,
-    tokens: [],
-    token: Token
-}
-
 const tokenizer = (input: string) => {
     let current: any = 0;
-    let tokens = [];
+    let tokens: Token[] = [];
 
     while (current < input.length) {
         let tokenized = false;
@@ -94,93 +85,7 @@ const tokenizer = (input: string) => {
 
 const result1 = tokenizer(file);
 
-/*
-const parseName = (tokens, current) => [current + 1,
-    {
-        type: 'NameLiteral',
-        value: tokens[current].value,
-    }];
-
-const parseColon = (tokens, current) => [current + 1,
-    {
-        type: 'ColonLiteral',
-        value: tokens[current].value,
-    }
-];
-const parseString = (tokens, current) => [current + 1,
-    {
-        type: 'StringLiteral',
-        value: tokens[current].value
-    }
-];
-const parseNewline = (tokens, current) => [current + 1,
-    {
-        type: 'NewlineLiteral',
-        value: tokens[current].value
-    }
-];
-
-const parseAnotherPackage =  (tokens, current)  => {
-    let token = tokens[++current];
-    let node = {
-        type: 'Package',
-        name: token.value,
-        params: [],
-    };
-    token = tokens[++current];
-    while (!(token.type === 'two-newlines')) {
-        let param;
-        [current, param] = parseToken(tokens, current);
-        // @ts-ignore
-        node.params.push(param);
-        token = tokens[current];
-    }
-    current++;
-    return [current, node];
-};
-
-const parseToken = (tokens, current) => {
-    let token = tokens[current];
-
-    if (token.type === 'name') {
-        return parseName(tokens, current);
-    }
-    if (token.type === 'string') {
-        return parseString(tokens, current);
-    }
-    if (token.type === 'colon') {
-        return parseColon(tokens, current);
-    }
-    if (token.type ==='two-newlines') {
-        return parseAnotherPackage(tokens,current)
-    }
-    throw new TypeError(token.type);
-};
-
-const parseProgram = (tokens) => {
-    let current = 0;
-    let ast = {
-        type: 'File',
-        body: [],
-    };
-    let node = null;
-    while (current < tokens.length) {
-        [current, node] = parseToken(tokens, current);
-        // @ts-ignore
-        ast.body.push(node);
-    }
-    return ast;
-};
-console.log('parser',parseProgram(result1));
-*/
-// console.log('result1',result1);
-
-// const emitName = node => `"${node.value}"`;
-//
-// const emitColon = node => node.value;
-//
-// const emitString = node => node.value;
-
+// console.log(result1);
 
 
 interface Pair {
@@ -193,8 +98,6 @@ interface Package {
 }
 
 const parseFile = (tokens, index): Package[] => {
-    console.log('parse file index', index)
-    console.log('length', tokens.length);
     let packages: Package[] = [];
     while (index < tokens.length - 1) {
         let pairs: Pair[];
@@ -207,7 +110,6 @@ const parseFile = (tokens, index): Package[] => {
 
 
 const parsePackage = (tokens, index): [number, Pair[]] => {
-    console.log('parse package index' + index + ' ' + util.inspect(tokens[index]));
     let pairs: Pair[] = [];
     while (tokens[index].type !== 'two-newlines') {
         let pair: Pair;
@@ -218,24 +120,33 @@ const parsePackage = (tokens, index): [number, Pair[]] => {
     }
     return [index + 1, pairs];
 };
+console.log('parsePackage',parsePackage(result1,0));
 
 const parsePair = (tokens, index): [number, Pair] => {
-    console.log('parse pair index' + index + ' ' + util.inspect(tokens[index]));
-
-    // if (tokens[index].type !== 'name') {
-    //     throw `Parse pair level all is bad ${util.inspect(tokens[index])},${index}`;
-    // }
-
     let name = tokens[index].value;
     index += 2;
     let value = '';
-
     while (tokens[index].type === 'string') {
         value += tokens[index].value;
         index += 1;
     }
     return [index, {key: name, value}];
 };
+const parsedFile = parseFile(result1, 0);
+// console.log('parsepair',parsePair(result1,0));
+// console.log('parsedFile',JSON.stringify(parsedFile,null,2));
+// console.log(parsedFile);
+export const toSeparatePackages = parsedFile.map(element => element.pairs);
 
-// console.log('new lenght',result1.length);
- console.log(JSON.stringify(parseFile(result1, 0), null, 2));
+const toPackagesNames = toSeparatePackages.map(element => element.filter(element => element.key === 'Package'));
+
+export const sortedNames =  toPackagesNames.map(element => element.map(element =>element.value)).sort();
+//console.log(sortedNames);
+
+const toDescriptions = toSeparatePackages.map(element =>element.filter(element=>element.key === 'Description'));
+
+// console.log(toDescriptions.map(element =>element.map(element=>element.value)));
+
+//console.log(toPackagesNames);
+// console.log(packagesNames);
+// console.log(JSON.stringify(parseFile(result1, 0), null, 2));
