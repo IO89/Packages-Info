@@ -62,28 +62,12 @@ const dependsCheck: (file: string) => Array<Object> = R.ifElse(
     R.identity,
     R.over(R.lensPath(["Depends"]), toDependenciesArray)
 );
-
-// Packages with depends as an array
-const withDependencies: (file: string) => Array<Object> = R.compose(
-    dependsCheck,
-    toSeparatePackage
-);
-// -------------- Separate by newline breaks and Iterate trough file and transform all packages ---------------
-const convertAllPackages: (file: string) => Array<Object> = R.compose(
-    R.map(withDependencies),
-    R.split("\n\n")
-);
-
-const Packages = convertAllPackages(file);
-// console.log(Packages);
-
-const showPackagesNames: (file: Object) => Array<string> = R.compose(
-    R.reject(R.isNil),
-    R.pluck("Package")
-);
 // --------- find reverse dependencies and merge them to packages --------------
 //
-const extractName = R.compose(R.prop('Package'), withDependencies);
+const extractName = R.compose(
+    R.prop('Package'),
+    toSeparatePackage
+);
 
 // Find where packages where Package name is in Depends field
 const searchNameDepends = R.compose(
@@ -91,15 +75,31 @@ const searchNameDepends = R.compose(
         R.where({
             Depends: R.includes(extractName(file))
         })),
-    convertAllPackages
 );
 
-// build an array of reverse dependencies
 const reverseDependenciesArray = R.compose(
     R.map(R.prop("Package")),
     searchNameDepends
 );
-// console.log('revDepArray',reverseDependenciesArray(file));
+// build an array with dependencies and reverse dependencies
+const withDependencies: (file: string) => Array<Object> = R.compose(
+    R.mergeDeepLeft({'Reverse-Depends': reverseDependenciesArray}),
+    dependsCheck,
+    toSeparatePackage
+);
+
+// -------------- Separate by newline breaks and Iterate trough file and transform all packages ---------------
+const convertAllPackages: (file: string) => Array<Object> = R.compose(
+    R.map(withDependencies),
+    R.split("\n\n")
+);
+
+const showPackagesNames: (file: Object) => Array<string> = R.compose(
+    R.reject(R.isNil),
+    R.pluck("Package")
+);
+
+const Packages = convertAllPackages(file);
 
 export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
 
