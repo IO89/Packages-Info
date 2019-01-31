@@ -74,16 +74,16 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
     R.split("\n\n")
 );
 
-const Packages = convertAllPackages(file);
-// console.log(Packages);
-
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
     R.pluck("Package")
 );
 // --------- find reverse dependencies and merge them to packages --------------
 //
-const extractName = R.compose(R.prop('Package'), withDependencies);
+const extractName = R.compose(
+    R.prop('Package'),
+    withDependencies
+);
 
 // Find where packages where Package name is in Depends field
 const searchNameDepends = R.compose(
@@ -99,7 +99,8 @@ const reverseDependenciesArray = R.compose(
     R.map(R.prop("Package")),
     searchNameDepends
 );
-// console.log('revDepArray',reverseDependenciesArray(file));
+
+const Packages = convertAllPackages(file);
 
 export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
 
