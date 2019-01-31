@@ -8,7 +8,7 @@ const file: string = fs.readFileSync(statusReal, "utf-8");
 //
 // move element if it starts with space to one index back
 const moveOneIndexBack: (accumulator: Array<string>, element: string) => Array<string> = (accumulator, element) => {
-    element.match(/^\ .*/)
+    element.match(/^ .*/)
         ? (accumulator[accumulator.length - 1] += element)
         : accumulator.push(element);
     return accumulator;
@@ -35,7 +35,6 @@ const toSeparatePackage: (file: string) => Array<Object> = R.compose(
     R.map(extractKeyPair),
     splitByKeyValuePairs
 );
-console.log('check',toSeparatePackage(file));
 
 // ------------------- Build dependencies into array and remove special characters in brackets ---------------
 //
@@ -76,6 +75,7 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
 );
 
 const Packages = convertAllPackages(file);
+// console.log(Packages);
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
@@ -99,6 +99,7 @@ const reverseDependenciesArray = R.compose(
     R.map(R.prop("Package")),
     searchNameDepends
 );
+// console.log('revDepArray',reverseDependenciesArray(file));
 
 export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
 
