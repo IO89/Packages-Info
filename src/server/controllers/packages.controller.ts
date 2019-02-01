@@ -38,7 +38,6 @@ const toSeparatePackage: (file: string) => Array<Object> = R.compose(
 
 // ------------------- Build dependencies into array and remove special characters in brackets ---------------
 //
-
 const removeSpecialCharacters = R.compose(
     R.trim,
     R.replace(/\(.*\)/, "")
@@ -68,6 +67,7 @@ const extractName = R.compose(
     R.prop('Package'),
     toSeparatePackage
 );
+// console.log('name',extractName(file));
 
 // Find where packages where Package name is in Depends field
 const searchNameDepends = R.compose(
@@ -75,15 +75,20 @@ const searchNameDepends = R.compose(
         R.where({
             Depends: R.includes(extractName(file))
         })),
-);
+        R.tap(console.log),
 
+);
+console.log('search',searchNameDepends(file));
+/*
 const reverseDependenciesArray = R.compose(
     R.map(R.prop("Package")),
     searchNameDepends
 );
+*/
+
 // build an array with dependencies and reverse dependencies
 const withDependencies: (file: string) => Array<Object> = R.compose(
-    R.mergeDeepLeft({'Reverse-Depends': reverseDependenciesArray}),
+    R.mergeDeepLeft({'Reverse-Depends': searchNameDepends}),
     dependsCheck,
     toSeparatePackage
 );
@@ -100,6 +105,7 @@ const showPackagesNames: (file: Object) => Array<string> = R.compose(
 );
 
 const Packages = convertAllPackages(file);
+// console.log(Packages);
 
 export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
 
