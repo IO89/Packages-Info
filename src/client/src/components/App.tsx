@@ -5,13 +5,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import PackagesList from "./PackagesList";
 import PackagesDetail from "./PackagesDetail";
 
-interface AppProps {
-  exact?: boolean;
-  path?: string;
-}
-
-export default class App extends React.Component<AppProps, {}> {
-  render() {
+export const App = () =>{
     return (
       <div>
         <BrowserRouter>
@@ -25,5 +19,4 @@ export default class App extends React.Component<AppProps, {}> {
         </BrowserRouter>
       </div>
     );
-  }
-}
+};

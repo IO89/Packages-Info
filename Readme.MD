@@ -1,9 +1,8 @@
 # Package Info App
     Displays names and descriptions of packages from status.real file.
-    List all the packages and navigate trough dependecnies and reverse dependencies(work in progress)
+    List all the packages and navigate trough dependencies and reverse dependencies.
 ## Demo
-    http://packages-env.esn7dakke4.eu-west-1.elasticbeanstalk.com/
-
+   http://packages-env.esn7dakke4.eu-west-1.elasticbeanstalk.com/
 ## How to install
     From root folder
     Backend: npm install
