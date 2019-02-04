@@ -8,6 +8,6 @@ COPY package*.json ./
 # Copy everything from current dir to packages dir
 COPY . .
 #Npm install and typescript compiler
-RUN npm i && npm run tsc
+RUN yarn && yarn run tsc
 #Launch server in watch mode
-CMD ["tini","--","npm","run","server"]
+CMD ["tini","--","yarn","run","server"]

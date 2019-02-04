@@ -63,7 +63,7 @@ const dependsCheck: (file: string) => Array<Object> = R.ifElse(
 );
 // --------- find reverse dependencies and merge them to packages --------------
 //
-const extractName = R.compose(
+/*const extractName = R.compose(
     R.prop('Package'),
     toSeparatePackage
 );
@@ -74,11 +74,11 @@ const searchNameDepends = R.compose(
         R.where({
             Depends: R.includes(extractName(file))
         }))
-);
+);*/
 
 // build an array with dependencies and reverse dependencies
 const withDependencies: (file: string) => Array<Object> = R.compose(
-    R.mergeDeepLeft({'Reverse-Depends': R.map(searchNameDepends)}),
+    // R.map(R.mergeDeepLeft({'Reverse-Depends': searchNameDepends})),
     dependsCheck,
     toSeparatePackage
 );
@@ -90,6 +90,7 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
 );
 
 const Packages = convertAllPackages(file);
+// console.log('All packages',Packages);
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
