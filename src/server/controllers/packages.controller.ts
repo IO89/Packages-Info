@@ -67,28 +67,18 @@ const extractName = R.compose(
     R.prop('Package'),
     toSeparatePackage
 );
-// console.log('name',extractName(file));
 
 // Find where packages where Package name is in Depends field
 const searchNameDepends = R.compose(
     R.filter(
         R.where({
             Depends: R.includes(extractName(file))
-        })),
-        R.tap(console.log),
-
+        }))
 );
-console.log('search',searchNameDepends(file));
-/*
-const reverseDependenciesArray = R.compose(
-    R.map(R.prop("Package")),
-    searchNameDepends
-);
-*/
 
 // build an array with dependencies and reverse dependencies
 const withDependencies: (file: string) => Array<Object> = R.compose(
-    R.mergeDeepLeft({'Reverse-Depends': searchNameDepends}),
+    R.mergeDeepLeft({'Reverse-Depends': R.map(searchNameDepends)}),
     dependsCheck,
     toSeparatePackage
 );
@@ -99,15 +89,15 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
     R.split("\n\n")
 );
 
+const Packages = convertAllPackages(file);
+
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
     R.pluck("Package")
 );
 
-const Packages = convertAllPackages(file);
-// console.log(Packages);
-
 export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
 
 export const searchByName: (name: string) => Object = name =>
     R.find(R.propEq("Package", name))(Packages);
+
