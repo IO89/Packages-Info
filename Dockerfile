@@ -6,5 +6,5 @@ COPY package*.json ./
 # Copy everything from current dir to packages dir
 COPY . .
 #Npm install and typescript compiler
-RUN npm i && npm run tsc
-CMD ["npm","run","start"]
+RUN yarn && yarn run tsc
+CMD ["yarn","run","start"]

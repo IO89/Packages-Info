@@ -6,8 +6,8 @@ COPY package*.json ./
 # Copy everything from current dir to Packages dir
 COPY . .
 # npm install
-RUN npm install && npm run tsc
-RUN npm run build
+RUN yarn && yarn run tsc
+RUN yarn run build
 
 
 FROM nginx
