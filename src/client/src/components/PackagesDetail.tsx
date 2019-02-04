@@ -33,8 +33,6 @@ export default class PackageDetail extends Component<PackageDetailProps & RouteC
         packageData.data.Package ? this.setState({packageName: packageData.data.Package}) : "";
         packageData.data.Description ? this.setState({packageDescription: packageData.data.Description}) : "";
         packageData.data.Depends ? this.setState({dependencies: packageData.data.Depends}) : [];
-        //packageData.data.Reverse-Dependencies ? this.setState({reverseDependencies:packageData.data.Reverse-Dependencies}) :[];
-        console.log(packageData.data);
     }
 
     render() {
