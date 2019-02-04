@@ -90,7 +90,7 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
 );
 
 const Packages = convertAllPackages(file);
-console.log('All packages',Packages);
+// console.log('All packages',Packages);
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),

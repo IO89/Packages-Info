@@ -10,6 +10,6 @@ COPY package*.json ./
 # Copy everything from current dir to Packages dir
 COPY . .
 # npm install
-RUN npm install && npm run tsc
+RUN yarn && yarn run tsc
 # Start container with command tini --npm start
-CMD ["tini","--","npm","start"]
+CMD ["tini","--","yarn","start"]
