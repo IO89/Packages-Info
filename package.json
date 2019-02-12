@@ -7,11 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./build/server/",
     "server": "nodemon ./build/server/",
-    "client": "npm run start --prefix src/client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "yarn run start --prefix src/client",
+    "dev": "concurrently \"yarn run server\" \"yarn run client\"",
     "tsc": "tsc",
-    "typescript-watch": "npm run tsc -- --watch",
-    "tslint": "tslint -c tslint.json 'src/server/*.ts' 'src/client/src/*.ts*'"
+    "typescript-watch": "yarn run tsc -- --watch",
+    "tslint": "tslint -c tslint.json 'src/server/*.ts' 'src/client/src/*.ts*'",
+    "postinstall": "cd src/client && yarn"
   },
   "author": "Ivan",
   "license": "ISC",
