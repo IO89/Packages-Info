@@ -5,8 +5,7 @@
    http://packages-env.esn7dakke4.eu-west-1.elasticbeanstalk.com/
 ## How to install
     From root folder
-    Backend: npm install
-    Frontend: cd src/client && npm install
+    Backend and Client: npm install
     Typescript compiler: npm run tsc
 ## Docker
     From root folder

@@ -11,7 +11,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "tsc": "tsc",
     "typescript-watch": "npm run tsc -- --watch",
-    "tslint": "tslint -c tslint.json 'src/server/*.ts' 'src/client/src/*.ts*'"
+    "tslint": "tslint -c tslint.json 'src/server/*.ts' 'src/client/src/*.ts*'",
+    "postinstall": "cd src/client && npm install"
   },
   "author": "Ivan",
   "license": "ISC",
