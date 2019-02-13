@@ -64,35 +64,30 @@ const dependsCheck: (file: string) => Array<Object> = R.ifElse(
 
 // build an array with dependencies
 const withDependencies: (file: string) => Array<Object> = R.compose(
-    // R.mergeDeepLeft({'Reverse-Depends': findRevDep}),
-    // searchNameDepends,
     dependsCheck,
     toSeparatePackage
 );
 
 // -------------- Separate by newline breaks and Iterate trough file and transform all packages ---------------
 const convertAllPackages: (file: string) => Array<Object> = R.compose(
-    // R.map(R.mergeDeepLeft({'Reverse-Depends': searchNameDepends})),
-    // R.reduce(searchNameDepends,[]),
     R.map(withDependencies),
     R.split("\n\n")
 );
 
 const Packages = convertAllPackages(file);
-// console.log(Packages);
 
 // --------- find reverse dependencies and merge them to packages --------------
 //
-const extractName = R.compose(
-    R.prop('Package'),
-    toSeparatePackage
+const extractNames = R.compose(
+    R.map(R.prop('Package')),
+    convertAllPackages
 );
-console.log(extractName(file));
+// console.log('name',(extractNames(file)).toString());
 
 // Find where packages where Package name is in Depends field and remove where depends is empty
 const searchNameDepends = R.compose(
     R.filter(R.where({
-        Depends: R.includes(extractName(file))
+        Depends: R.includes(extractNames(file))
     })),
     R.reject(emptyDepends)
 );
@@ -100,6 +95,7 @@ const searchNameDepends = R.compose(
 // build an array of reverse dependencies
 const reverseDependenciesArray = R.compose(
     R.map(R.prop('Package')),
+    R.tap(console.log),
     searchNameDepends
 );
 // Merge reverse depends into packages
@@ -107,8 +103,7 @@ const mergeDepends = R.compose(
     R.map(R.mergeDeepLeft({'Reverse-Depends':reverseDependenciesArray(Packages)})),
     convertAllPackages
 );
-// console.log('res',mergeDepends(file));
-
+console.log('res',mergeDepends(file));
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
@@ -119,4 +114,3 @@ export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).
 
 export const searchByName: (name: string) => Object = name =>
     R.find(R.propEq("Package", name))(Packages);
-
