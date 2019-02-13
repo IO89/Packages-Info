@@ -61,37 +61,54 @@ const dependsCheck: (file: string) => Array<Object> = R.ifElse(
     R.identity,
     R.over(R.lensPath(["Depends"]), toDependenciesArray)
 );
-// --------- find reverse dependencies and merge them to packages --------------
-//
-/*
-const extractName = R.compose(
-    R.prop('Package'),
-    toSeparatePackage
-);
 
-// Find where packages where Package name is in Depends field
-const searchNameDepends = R.compose(
-    R.filter(
-        R.where({
-            Depends: R.includes(extractName(file))
-        }))
-);
-*/
-
-// build an array with dependencies and reverse dependencies
+// build an array with dependencies
 const withDependencies: (file: string) => Array<Object> = R.compose(
-    // R.map(R.mergeDeepLeft({'Reverse-Depends': searchNameDepends})),
+    // R.mergeDeepLeft({'Reverse-Depends': findRevDep}),
+    // searchNameDepends,
     dependsCheck,
     toSeparatePackage
 );
 
 // -------------- Separate by newline breaks and Iterate trough file and transform all packages ---------------
 const convertAllPackages: (file: string) => Array<Object> = R.compose(
+    // R.map(R.mergeDeepLeft({'Reverse-Depends': searchNameDepends})),
+    // R.reduce(searchNameDepends,[]),
     R.map(withDependencies),
     R.split("\n\n")
 );
 
 const Packages = convertAllPackages(file);
+// console.log(Packages);
+
+// --------- find reverse dependencies and merge them to packages --------------
+//
+const extractName = R.compose(
+    R.prop('Package'),
+    toSeparatePackage
+);
+console.log(extractName(file));
+
+// Find where packages where Package name is in Depends field and remove where depends is empty
+const searchNameDepends = R.compose(
+    R.filter(R.where({
+        Depends: R.includes(extractName(file))
+    })),
+    R.reject(emptyDepends)
+);
+
+// build an array of reverse dependencies
+const reverseDependenciesArray = R.compose(
+    R.map(R.prop('Package')),
+    searchNameDepends
+);
+// Merge reverse depends into packages
+const mergeDepends = R.compose(
+    R.map(R.mergeDeepLeft({'Reverse-Depends':reverseDependenciesArray(Packages)})),
+    convertAllPackages
+);
+// console.log('res',mergeDepends(file));
+
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
