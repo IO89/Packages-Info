@@ -1,6 +1,7 @@
 import fs from "fs";
 import R from "ramda";
 import {statusReal} from "../../../data";
+import {element} from "prop-types";
 
 const file: string = fs.readFileSync(statusReal, "utf-8");
 
@@ -74,43 +75,49 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
     R.split("\n\n")
 );
 
-const Packages = convertAllPackages(file);
-
 // --------- find reverse dependencies and merge them to packages --------------
 //
-const extractNames = R.compose(
+const extractNames:(file:string) => Array<string> = R.compose(
     R.map(R.prop('Package')),
-    convertAllPackages
+    withDependencies,
 );
-// console.log('name',(extractNames(file)).toString());
+const extractName = R.compose(
+    R.prop('Package'),
+    withDependencies
+);
 
 // Find where packages where Package name is in Depends field and remove where depends is empty
 const searchNameDepends = R.compose(
     R.filter(R.where({
-        Depends: R.includes(extractNames(file))
+        Depends: R.includes(extractName(file))
     })),
     R.reject(emptyDepends)
 );
+// console.log('search',searchNameDepends(convertAllPackages(file)));
 
 // build an array of reverse dependencies
 const reverseDependenciesArray = R.compose(
     R.map(R.prop('Package')),
-    R.tap(console.log),
     searchNameDepends
 );
+// console.log('reverse',reverseDependenciesArray(convertAllPackages(file)));
 // Merge reverse depends into packages
-const mergeDepends = R.compose(
-    R.map(R.mergeDeepLeft({'Reverse-Depends':reverseDependenciesArray(Packages)})),
+const mergeReverseDepends = R.compose(
+    R.map(R.mergeDeepLeft({'Reverse-Depends':reverseDependenciesArray(convertAllPackages(file))})),
     convertAllPackages
 );
-console.log('res',mergeDepends(file));
+
+console.log('res',mergeReverseDepends(file));
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
     R.pluck("Package")
 );
 
-export const listAllPackagesSorted: Array<string> = showPackagesNames(Packages).sort();
+const allPackages = showPackagesNames(file);
+// console.log('should be final result',allPackages);
+
+export const listAllPackagesSorted: Array<string> = allPackages.sort();
 
 export const searchByName: (name: string) => Object = name =>
-    R.find(R.propEq("Package", name))(Packages);
+    R.find(R.propEq("Package", name))(allPackages);
