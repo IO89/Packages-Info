@@ -1,7 +1,6 @@
 import fs from "fs";
 import R from "ramda";
 import {statusReal} from "../../../data";
-import {element} from "prop-types";
 
 const file: string = fs.readFileSync(statusReal, "utf-8");
 
@@ -75,49 +74,43 @@ const convertAllPackages: (file: string) => Array<Object> = R.compose(
     R.split("\n\n")
 );
 
+const Packages = convertAllPackages(file);
+
 // --------- find reverse dependencies and merge them to packages --------------
 //
-const extractNames:(file:string) => Array<string> = R.compose(
-    R.map(R.prop('Package')),
-    withDependencies,
-);
-const extractName = R.compose(
-    R.prop('Package'),
-    withDependencies
-);
+// Extract package name and search in Depends field, then merge into package where depends.
 
-// Find where packages where Package name is in Depends field and remove where depends is empty
-const searchNameDepends = R.compose(
-    R.filter(R.where({
-        Depends: R.includes(extractName(file))
-    })),
-    R.reject(emptyDepends)
-);
-// console.log('search',searchNameDepends(convertAllPackages(file)));
+const searchReverseDepends: (accumulator: Array<string>, element: string) => Array<string> = (accumulator, element) => {
+    const extractName = R.prop('Package')(element);
 
-// build an array of reverse dependencies
-const reverseDependenciesArray = R.compose(
-    R.map(R.prop('Package')),
-    searchNameDepends
-);
-// console.log('reverse',reverseDependenciesArray(convertAllPackages(file)));
-// Merge reverse depends into packages
-const mergeReverseDepends = R.compose(
-    R.map(R.mergeDeepLeft({'Reverse-Depends':reverseDependenciesArray(convertAllPackages(file))})),
+    const searchDepends = R.compose(
+        R.filter(R.where({
+            Depends: R.includes(extractName)
+        })),
+        R.reject(emptyDepends))(Packages);
+
+    searchDepends
+        ? accumulator.push(R.compose(
+        R.mergeDeepLeft({'rDepends': R.map(R.prop('Package'))(searchDepends)})
+        )(element))
+        : [];
+    return accumulator;
+};
+
+// Packages with reverse dependencies
+const mergedReverseDepends:(file:string) => Array<object> = R.compose(
+    R.reduce(searchReverseDepends, []),
     convertAllPackages
 );
 
-console.log('res',mergeReverseDepends(file));
+const allPackages = mergedReverseDepends(file);
 
 const showPackagesNames: (file: Object) => Array<string> = R.compose(
     R.reject(R.isNil),
     R.pluck("Package")
 );
 
-const allPackages = showPackagesNames(file);
-// console.log('should be final result',allPackages);
-
-export const listAllPackagesSorted: Array<string> = allPackages.sort();
+export const listAllPackagesSorted: Array<string> = showPackagesNames(allPackages).sort();
 
 export const searchByName: (name: string) => Object = name =>
     R.find(R.propEq("Package", name))(allPackages);
