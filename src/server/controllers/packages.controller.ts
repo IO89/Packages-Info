@@ -78,27 +78,26 @@ const Packages = convertAllPackages(file);
 
 // --------- find reverse dependencies and merge them to packages --------------
 //
-// Extract package name and search in Depends field, then merge into package where depends.
-
+// Extract package name and search in Depends field, then merge into package.
 const searchReverseDepends: (accumulator: Array<string>, element: string) => Array<string> = (accumulator, element) => {
     const extractName = R.prop('Package')(element);
-
     const searchDepends = R.compose(
         R.filter(R.where({
             Depends: R.includes(extractName)
         })),
         R.reject(emptyDepends))(Packages);
+    const reverseDependsArray = R.map(R.prop('Package'));
 
     searchDepends
         ? accumulator.push(R.compose(
-        R.mergeDeepLeft({'rDepends': R.map(R.prop('Package'))(searchDepends)})
+        R.mergeDeepLeft({'reverseDepends': reverseDependsArray(searchDepends)})
         )(element))
         : [];
     return accumulator;
 };
 
 // Packages with reverse dependencies
-const mergedReverseDepends:(file:string) => Array<object> = R.compose(
+const mergedReverseDepends: (file: string) => Array<object> = R.compose(
     R.reduce(searchReverseDepends, []),
     convertAllPackages
 );
