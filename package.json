@@ -11,8 +11,7 @@
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
     "tsc": "tsc",
     "typescript-watch": "yarn run tsc -- --watch",
-    "tslint": "tslint -c tslint.json 'src/server/*.ts' 'src/client/src/*.ts*'",
-    "postinstall": "cd src/client && yarn"
+    "tslint": "tslint -c tslint.json 'src/server/*.ts' 'src/client/src/*.ts*'"
   },
   "author": "Ivan",
   "license": "ISC",
